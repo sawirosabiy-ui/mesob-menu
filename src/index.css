@@ -1,0 +1,559 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-main: #0C0A09;
+    --bg-surface: #141211;
+    --bg-card: #1C1917;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-gold: rgba(212, 175, 55, 0.3);
+    --text-primary: #FDFCF9;
+    --text-secondary: #D6D3D1;
+    --text-muted: #A8A29E;
+    --accent-gold: #D4AF37;
+    --accent-terracotta: #C85A32;
+    --accent-olive: #7B8762;
+  }
+
+  :root.theme-light,
+  body.theme-light {
+    --bg-main: #FDFCF9;
+    --bg-surface: #F6F0E6;
+    --bg-card: #EDE2D0;
+    --border-subtle: rgba(120, 85, 45, 0.16);
+    --border-gold: rgba(138, 94, 18, 0.35);
+    --text-primary: #14100D;
+    --text-secondary: #4A3C32;
+    --text-muted: #7A6859;
+    --accent-gold: #8A5E12;
+    --accent-terracotta: #B54A24;
+    --accent-olive: #54653C;
+    background-color: #FDFCF9 !important;
+    color: #14100D !important;
+  }
+
+  body {
+    background-color: #0C0A09;
+    color: #FDFCF9;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+}
+
+/* Custom scrollbar for horizontal categories and filters */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Tactile glow and subtle borders */
+.luxury-border {
+  border: 1px solid var(--border-gold);
+}
+
+.luxury-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.25s ease;
+}
+
+.luxury-card:hover {
+  border-color: var(--border-gold);
+}
+
+.gold-gradient-btn {
+  background: linear-gradient(135deg, #E5C378 0%, #D4AF37 50%, #B8922C 100%);
+  color: #12100E;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.gold-gradient-btn:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.35);
+}
+
+.luxury-glass {
+  background: rgba(18, 16, 14, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.theme-light .luxury-glass {
+  background: rgba(250, 246, 238, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(70, 46, 34, 0.12);
+}
+
+.safe-area-bottom {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+/* Smooth modal transitions */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+/* Mobile device container framing */
+.mobile-device-frame {
+  width: 100%;
+  max-width: 430px;
+  height: 880px;
+  max-height: 92vh;
+  border-radius: 46px;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 10px #242220, 0 0 0 12px #181615;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 640px) {
+  .mobile-device-frame {
+    max-width: 100% !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Thermal Printer & Kitchen Receipt Animations */
+@keyframes printerHum {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(0.35px, -0.35px); }
+  40% { transform: translate(-0.35px, 0.25px); }
+  60% { transform: translate(0.25px, 0.35px); }
+  80% { transform: translate(-0.25px, -0.25px); }
+}
+
+.animate-printer-hum {
+  animation: printerHum 0.075s infinite linear;
+}
+
+@keyframes cutterFlash {
+  0% { opacity: 0; transform: scaleX(0); }
+  30% { opacity: 1; transform: scaleX(1); }
+  70% { opacity: 1; transform: scaleX(1); }
+  100% { opacity: 0; transform: scaleX(1); }
+}
+
+.animate-cutter-flash {
+  animation: cutterFlash 0.28s ease-out forwards;
+}
+
+@keyframes solenoidSnap {
+  0% { transform: translateY(0); }
+  35% { transform: translateY(0.8px); }
+  100% { transform: translateY(0); }
+}
+
+.animate-solenoid-snap {
+  animation: solenoidSnap 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes paperSeparate {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(14px) rotate(-0.35deg); }
+}
+
+.animate-paper-separate {
+  animation: paperSeparate 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Receipt jagged edge styling */
+.receipt-serrated-edge {
+  background: radial-gradient(circle, transparent, transparent 3px, #FAF7F2 3.5px);
+  background-size: 8px 8px;
+  background-position: bottom;
+}
+
+/* ==========================================================================
+   Fly-to-Cart Parabolic Motion & Micro-Interactions
+   ========================================================================== */
+@keyframes mesobFlyCurve {
+  0% {
+    transform: translate(var(--startX), var(--startY)) scale(1.1) rotate(0deg);
+    opacity: 1;
+  }
+  30% {
+    transform: translate(calc((var(--startX) + var(--targetX)) * 0.5), var(--peakY)) scale(1.25) rotate(15deg);
+    opacity: 1;
+  }
+  85% {
+    transform: translate(calc(var(--targetX) * 0.95), calc(var(--targetY) * 0.95)) scale(0.7) rotate(45deg);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(var(--targetX), var(--targetY)) scale(0.2) rotate(60deg);
+    opacity: 0;
+  }
+}
+
+@keyframes cartBumpPulse {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35) rotate(-6deg);
+    filter: drop-shadow(0 0 16px rgba(212, 175, 55, 0.9));
+  }
+  70% {
+    transform: scale(0.92) rotate(4deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.animate-cart-bump {
+  animation: cartBumpPulse 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes floatPlusOne {
+  0% {
+    transform: translate(-50%, 0) scale(0.6);
+    opacity: 0;
+  }
+  40% {
+    transform: translate(-50%, -24px) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -42px) scale(0.9);
+    opacity: 0;
+  }
+}
+
+.animate-float-plus-one {
+  animation: floatPlusOne 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-printer-hum,
+  .animate-cutter-flash,
+  .animate-solenoid-snap,
+  .animate-paper-separate,
+  .animate-cart-bump,
+  .animate-float-plus-one {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* ==========================================================================
+   ROYAL AXUM POLISHED IVORY & BRONZE THEME (Light Mode)
+   High-Contrast Luxury Ethiopian Dining Experience
+   ========================================================================== */
+
+/* 1. Base Canvas & Body */
+html.theme-light,
+body.theme-light,
+.theme-light {
+  background-color: #FDFCF9 !important;
+  color: #14100D !important;
+}
+
+/* 2. Full-Page & Major Container Backgrounds */
+.theme-light .bg-obsidian-950,
+.theme-light .bg-charcoal-950,
+.theme-light .bg-stone-950,
+.theme-light .bg-\[\#0C0A09\],
+.theme-light [class*="bg-obsidian-950"],
+.theme-light [class*="bg-charcoal-950"],
+.theme-light [class*="bg-stone-950"] {
+  background-color: #FDFCF9 !important;
+}
+
+/* 3. Primary Cards, Drawers & Surface Cards (Polished Alabaster Ivory) */
+.theme-light .bg-obsidian-900,
+.theme-light .bg-charcoal-900,
+.theme-light .bg-stone-900,
+.theme-light [class*="bg-obsidian-900"],
+.theme-light [class*="bg-charcoal-900"],
+.theme-light [class*="bg-stone-900"] {
+  background-color: #F6F0E6 !important;
+}
+
+/* 4. Secondary Sub-cards, Dish Cards & Nested Elements (Fine Sandstone Linen) */
+.theme-light .bg-charcoal-850,
+.theme-light .bg-charcoal-800,
+.theme-light .bg-obsidian-850,
+.theme-light .bg-stone-850,
+.theme-light .bg-stone-800,
+.theme-light [class*="bg-charcoal-850"],
+.theme-light [class*="bg-charcoal-800"],
+.theme-light [class*="bg-stone-800"] {
+  background-color: #EDE2D0 !important;
+}
+
+/* 5. Hover states for cards, buttons & items */
+.theme-light .hover\:bg-charcoal-800:hover,
+.theme-light .hover\:bg-charcoal-850:hover,
+.theme-light .hover\:bg-stone-800:hover,
+.theme-light .hover\:bg-obsidian-800:hover,
+.theme-light .hover\:bg-obsidian-900:hover,
+.theme-light .hover\:bg-stone-700:hover {
+  background-color: #E3D5C0 !important;
+}
+
+/* 6. Soft Warm Bronze Borders */
+.theme-light .border-stone-800,
+.theme-light .border-stone-700,
+.theme-light [class*="border-stone-800"],
+.theme-light [class*="border-stone-700"],
+.theme-light [class*="border-amber-900"] {
+  border-color: rgba(120, 85, 45, 0.18) !important;
+}
+
+/* 7. Comprehensive High-Contrast Typography Hierarchy */
+/* Base headings & text default to deep volcanic charcoal */
+.theme-light,
+.theme-light body,
+.theme-light main,
+.theme-light h1,
+.theme-light h2,
+.theme-light h3,
+.theme-light h4,
+.theme-light h5,
+.theme-light h6 {
+  color: #110D0A !important;
+}
+
+/* Primary text (Titles, Headings, Numbers, Dish Names, Cart Counts) */
+.theme-light .text-stone-100,
+.theme-light .text-stone-200,
+.theme-light [class*="text-stone-100"],
+.theme-light [class*="text-stone-200"] {
+  color: #110D0A !important;
+}
+
+/* Secondary descriptions, ingredients, explanations, pairing notes (Deep Roasted Espresso) */
+.theme-light .text-stone-300,
+.theme-light .text-stone-400,
+.theme-light [class*="text-stone-300"],
+.theme-light [class*="text-stone-400"] {
+  color: #2D231C !important;
+}
+
+/* Muted labels, meta & footers (Warm Coffee Umber - minimum 5:1 contrast) */
+.theme-light .text-stone-500,
+.theme-light .text-stone-600,
+.theme-light [class*="text-stone-500"],
+.theme-light [class*="text-stone-600"] {
+  color: #554438 !important;
+}
+
+/* 8. Gold & Amber Accents (Prices, Headings, Brand, Highlights)
+   Converts pale yellow/gold into deep, striking Imperial Bronze Gold (#7A4E0B) */
+.theme-light [class*="text-gold-"],
+.theme-light [class*="text-amber-"],
+.theme-light [class*="text-yellow-"] {
+  color: #7A4E0B !important;
+}
+
+/* 9. Specialized Semantic Badges & Accents */
+/* Emerald / Fasting / Vegan / Checkmark Accents */
+.theme-light [class*="text-emerald-"],
+.theme-light [class*="text-green-"] {
+  color: #185E22 !important;
+}
+
+/* Red / Spicy / Berbere / Danger / Sold Out Accents */
+.theme-light [class*="text-red-"],
+.theme-light [class*="text-rose-"],
+.theme-light [class*="text-berbere-"],
+.theme-light [class*="text-terracotta-"] {
+  color: #9C2410 !important;
+}
+
+/* Blue / Cyan / Sky Accents */
+.theme-light [class*="text-sky-"],
+.theme-light [class*="text-blue-"],
+.theme-light [class*="text-cyan-"] {
+  color: #0F4C81 !important;
+}
+
+/* Olive / Herb Accents */
+.theme-light [class*="text-olive-"] {
+  color: #385526 !important;
+}
+
+/* 10. Buttons & Interactive States */
+/* Gold Buttons: Rich Royal Honey Gold with bold dark text */
+.theme-light .bg-gold-500,
+.theme-light .bg-amber-500,
+.theme-light [class*="bg-gold-500"],
+.theme-light [class*="bg-amber-500"],
+.theme-light .gold-gradient-btn {
+  background-color: #C89E48 !important;
+  color: #110D0A !important;
+}
+
+.theme-light .bg-gold-500 *,
+.theme-light .bg-amber-500 *,
+.theme-light .gold-gradient-btn * {
+  color: #110D0A !important;
+}
+
+.theme-light .hover\:bg-gold-400:hover,
+.theme-light .hover\:bg-amber-400:hover {
+  background-color: #D6AA52 !important;
+  color: #0E0B08 !important;
+}
+
+/* Preserve crisp white text on pure red notification/danger pills (e.g. Sold Out badge) */
+.theme-light .bg-red-600,
+.theme-light .bg-red-600 * {
+  background-color: #DC2626 !important;
+  color: #FFFFFF !important;
+}
+
+/* Subtle gold badge containers */
+.theme-light .bg-gold-500\/10,
+.theme-light .bg-gold-500\/15,
+.theme-light .bg-gold-500\/20,
+.theme-light .bg-amber-500\/10,
+.theme-light .bg-amber-500\/15,
+.theme-light .bg-amber-500\/20 {
+  background-color: rgba(200, 158, 72, 0.16) !important;
+}
+
+.theme-light .border-gold-500\/30,
+.theme-light .border-gold-500\/40,
+.theme-light .border-gold-500\/50,
+.theme-light .border-gold-500\/60,
+.theme-light .border-amber-500\/30,
+.theme-light .border-amber-500\/40,
+.theme-light .border-amber-500\/50 {
+  border-color: rgba(122, 78, 11, 0.35) !important;
+}
+
+/* 11. Dark-tint containers converted to soft luxury tinted cards */
+.theme-light [class*="bg-espresso-"] {
+  background-color: rgba(200, 158, 72, 0.15) !important;
+  border-color: rgba(122, 78, 11, 0.3) !important;
+}
+
+.theme-light [class*="bg-amber-950"] {
+  background-color: rgba(200, 158, 72, 0.12) !important;
+  border-color: rgba(122, 78, 11, 0.25) !important;
+}
+
+.theme-light [class*="bg-emerald-950"] {
+  background-color: rgba(24, 94, 34, 0.1) !important;
+  border-color: rgba(24, 94, 34, 0.25) !important;
+}
+
+.theme-light [class*="bg-red-950"] {
+  background-color: rgba(156, 36, 16, 0.1) !important;
+  border-color: rgba(156, 36, 16, 0.25) !important;
+}
+
+/* 12. Hover & Group-Hover Rules — Prevent text from washing out on hover */
+.theme-light a:hover,
+.theme-light button:hover,
+.theme-light [class*="hover:text-white"]:hover,
+.theme-light [class*="hover:text-stone-"]:hover {
+  color: #000000 !important;
+}
+
+.theme-light [class*="hover:text-gold-"]:hover,
+.theme-light [class*="hover:text-amber-"]:hover {
+  color: #5C3A06 !important;
+}
+
+.theme-light .group:hover [class*="group-hover:text-gold-"],
+.theme-light .group:hover [class*="group-hover:text-amber-"] {
+  color: #7A4E0B !important;
+}
+
+.theme-light .group:hover [class*="group-hover:text-white"],
+.theme-light .group:hover [class*="group-hover:text-stone-"] {
+  color: #000000 !important;
+}
+
+/* 13. Header & Bottom Bar Glass Blur in Light Mode */
+.theme-light header,
+.theme-light nav {
+  background-color: rgba(253, 252, 249, 0.94) !important;
+  border-color: rgba(120, 85, 45, 0.16) !important;
+}
+
+.theme-light .luxury-glass {
+  background: rgba(253, 252, 249, 0.94) !important;
+  border-color: rgba(120, 85, 45, 0.16) !important;
+}
+
+/* 10. Modals, Drawers & Backdrops */
+.theme-light [class*="bg-black\/"] {
+  background-color: rgba(20, 16, 13, 0.52) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* Inputs & Textareas */
+.theme-light input,
+.theme-light textarea {
+  background-color: #FAF6EF !important;
+  border-color: rgba(120, 85, 45, 0.22) !important;
+  color: #14100D !important;
+}
+
+.theme-light input::placeholder,
+.theme-light textarea::placeholder {
+  color: #7A6859 !important;
+}
+
+/* Mobile Frame & Device Shell */
+.theme-light .mobile-device-frame {
+  box-shadow: 0 25px 60px -15px rgba(60, 40, 15, 0.22), 0 0 0 10px #EDE2D2, 0 0 0 12px #D8CABA !important;
+  border-color: #DACDBD !important;
+  background-color: #FDFCF9 !important;
+}
+
+.theme-light .mobile-device-frame > div:first-child {
+  background-color: #FDFCF9 !important;
+}
+
+.theme-light .mobile-device-frame > div:first-child > div {
+  background-color: #E8DDCD !important;
+}
+
+/* Presenter Bar in Light Mode */
+.theme-light .bg-stone-950 {
+  background-color: #F5EFE5 !important;
+  border-color: rgba(120, 85, 45, 0.2) !important;
+}
+
+
