@@ -195,10 +195,10 @@ export const DishCard: React.FC<DishCardProps> = ({ dish, layout = 'horizontal' 
   return (
     <div
       onClick={handleCardClick}
-      className="group relative rounded-2xl bg-charcoal-850/80 border border-stone-800/80 hover:border-gold-500/40 p-3.5 transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 shadow-md hover:shadow-black/50"
+      className="group relative rounded-2xl bg-charcoal-850/80 border border-stone-800/80 hover:border-gold-500/40 p-3 sm:p-3.5 transition-all duration-200 cursor-pointer flex items-center justify-between gap-2.5 sm:gap-3.5 shadow-md hover:shadow-black/50"
     >
       {/* Left: Rounded Square Dish Photo */}
-      <div className="relative w-18 h-18 sm:w-20 sm:h-20 rounded-2xl overflow-hidden shrink-0 border border-stone-800/80 bg-charcoal-950">
+      <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl overflow-hidden shrink-0 border border-stone-800/80 bg-charcoal-950">
         <MesobImage
           src={dish.image}
           alt={displayName}
@@ -217,37 +217,37 @@ export const DishCard: React.FC<DishCardProps> = ({ dish, layout = 'horizontal' 
       </div>
 
       {/* Middle: Dish Name, Amharic name, Verified Ingredients, and Price */}
-      <div className="flex-1 min-w-0 pr-1">
+      <div className="flex-1 min-w-0 pr-0.5 sm:pr-1">
         <div className="flex items-center gap-1.5">
-          <h3 className="font-display text-base font-medium text-stone-100 group-hover:text-gold-200 transition-colors truncate">
+          <h3 className="font-display text-sm sm:text-base font-medium text-stone-100 group-hover:text-gold-200 transition-colors truncate">
             {displayName}
           </h3>
           {(dish.spiceLevel === 'spicy' || dish.spiceLevel === 'extra-spicy') && (
-            <span className="text-[10px] text-terracotta-400 font-bold" title="Spicy">
+            <span className="text-[10px] text-terracotta-400 font-bold shrink-0" title="Spicy">
               🌶️
             </span>
           )}
         </div>
 
         {dish.amharicName && (
-          <p className="text-[11px] text-gold-400/80 font-serif leading-none mt-0.5 truncate">
+          <p className="text-[10px] sm:text-[11px] text-gold-400/80 font-serif leading-none mt-0.5 truncate">
             {dish.amharicName}
           </p>
         )}
 
         {/* Subtitle / verified ingredient teaser */}
-        <p className="text-[11px] text-stone-400 truncate mt-1 font-light">
+        <p className="text-[10px] sm:text-[11px] text-stone-400 truncate mt-1 font-light">
           {ingredientSubtitle}
         </p>
 
         {/* Price & Explain CTA Row */}
-        <div className="mt-1.5 flex items-center justify-between gap-2">
+        <div className="mt-1 sm:mt-1.5 flex flex-wrap items-center justify-between gap-1 sm:gap-2">
           <div className="flex items-baseline gap-1">
-            <span className="font-display font-semibold text-sm text-gold-300">
+            <span className="font-display font-semibold text-xs sm:text-sm text-gold-300">
               {priceInfo.primary}
             </span>
             {priceInfo.isConverted && priceInfo.secondary && (
-              <span className="text-[10px] text-stone-400 font-sans">
+              <span className="text-[9px] sm:text-[10px] text-stone-400 font-sans">
                 ({priceInfo.secondary})
               </span>
             )}
@@ -258,9 +258,9 @@ export const DishCard: React.FC<DishCardProps> = ({ dish, layout = 'horizontal' 
               e.stopPropagation();
               selectDish(dish);
             }}
-            className="text-[10px] text-gold-400/90 hover:text-gold-200 border border-gold-500/25 hover:border-gold-500/50 bg-gold-500/5 hover:bg-gold-500/10 px-2 py-0.5 rounded-full font-medium transition-all cursor-pointer"
+            className="text-[9px] sm:text-[10px] text-gold-400/90 hover:text-gold-200 border border-gold-500/25 hover:border-gold-500/50 bg-gold-500/5 hover:bg-gold-500/10 px-2 py-0.5 rounded-full font-medium transition-all cursor-pointer truncate"
           >
-            Explain this dish →
+            Explain →
           </button>
         </div>
       </div>

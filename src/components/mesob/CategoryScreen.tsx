@@ -403,30 +403,30 @@ export const CategoryScreen: React.FC = () => {
 
       {/* View Layout Toggle: Sideways Slider vs Vertical List */}
       {!searchQuery.trim() && (
-        <div className="flex items-center justify-between px-1 mb-3">
-          <div className="flex items-center gap-1.5 text-xs text-stone-300 font-medium">
-            <span className="text-gold-300 font-display font-semibold text-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1 mb-3">
+          <div className="flex items-center gap-1.5 text-xs text-stone-300 font-medium min-w-0">
+            <span className="text-gold-300 font-display font-semibold text-sm truncate">
               {isAllMode ? 'All Menu Categories' : getLocalizedCategoryName(currentCategory)}
             </span>
-            <span className="text-stone-500 font-mono text-[11px]">
-              ({displayedDishes.length} dishes)
+            <span className="text-stone-500 font-mono text-[11px] shrink-0">
+              ({displayedDishes.length})
             </span>
           </div>
 
-          <div className="flex items-center gap-1 bg-charcoal-850 border border-stone-800 rounded-full p-0.5 text-[11px]">
+          <div className="flex items-center gap-1 bg-charcoal-850 border border-stone-800 rounded-full p-0.5 text-[11px] self-start sm:self-auto shrink-0 shadow-sm">
             <button
               onClick={() => setViewMode('slider')}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-full font-medium transition-all ${
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-full font-medium transition-all ${
                 viewMode === 'slider'
                   ? 'bg-gold-500 text-charcoal-950 font-bold shadow-sm'
                   : 'text-stone-400 hover:text-stone-200'
               }`}
             >
-              <span>⇄ Sideways Slider</span>
+              <span>⇄ Slider</span>
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-full font-medium transition-all ${
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-full font-medium transition-all ${
                 viewMode === 'list'
                   ? 'bg-gold-500 text-charcoal-950 font-bold shadow-sm'
                   : 'text-stone-400 hover:text-stone-200'
