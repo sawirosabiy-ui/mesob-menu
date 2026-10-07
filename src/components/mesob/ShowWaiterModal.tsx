@@ -67,7 +67,7 @@ export const ShowWaiterModal: React.FC = () => {
         <div className="flex items-center justify-between pb-3 border-b border-stone-800">
           <div className="flex items-center gap-2 text-gold-400 text-xs font-bold uppercase tracking-wider">
             <UserCheck className="w-5 h-5 text-gold-400" />
-            <span>Show to Waiter / ለጋባዥዎ ያሳዩ</span>
+            <span>Show to Waiter / ለአስተናጋጅ አሳይ</span>
           </div>
           <button
             onClick={() => setIsShowWaiterOpen(false)}
@@ -140,10 +140,13 @@ export const ShowWaiterModal: React.FC = () => {
           )}
         </div>
 
-        {/* Friendly guidance note */}
-        <div className="p-3 rounded-xl bg-stone-950/60 border border-stone-800/80 text-xs text-stone-400 text-center leading-relaxed">
-          <p>
-            Hold this screen up to your server. They will record your order instantly at your table.
+        {/* Clear Guidance: Strictly Verbal Server Confirmation Note */}
+        <div className="p-3.5 rounded-xl bg-amber-950/40 border border-amber-500/40 text-xs text-amber-200 text-center leading-relaxed">
+          <p className="font-medium">
+            Show this screen to a restaurant server. Your order has not been sent digitally.
+          </p>
+          <p className="text-[11px] text-amber-300/80 font-serif mt-0.5">
+            ይህንን ስክሪን ለአስተናጋጅ በማሳየት ትዕዛዝዎን በአካል ያስተላልፉ።
           </p>
         </div>
 

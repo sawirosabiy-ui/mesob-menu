@@ -293,6 +293,32 @@ export const CategoryScreen: React.FC = () => {
         )}
       </div>
 
+      {/* Prominent "View Table Order • X items" Banner above Category Navigation */}
+      {cartItemCount > 0 && (
+        <div
+          onClick={() => setRoute('order')}
+          className="mb-3 p-3 rounded-2xl bg-gradient-to-r from-amber-500/20 via-gold-500/15 to-amber-500/20 border border-gold-400/50 shadow-md flex items-center justify-between cursor-pointer hover:border-gold-400 active:scale-99 transition-all"
+        >
+          <div className="flex items-center gap-2.5">
+            <span className="w-6 h-6 rounded-full bg-gold-400 text-stone-950 font-bold font-mono text-xs flex items-center justify-center">
+              {cartItemCount}
+            </span>
+            <div>
+              <span className="text-xs font-bold text-gold-200 block leading-tight">
+                View Table Order • {cartItemCount} {cartItemCount === 1 ? 'item' : 'items'}
+              </span>
+              <span className="text-[10px] text-stone-400 font-mono">
+                Subtotal: {formatPrice(cartTotal).primary}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1 text-xs font-bold text-gold-300">
+            <span>Review</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </div>
+        </div>
+      )}
+
       {/* Interactive Mini-Slider Strip for Categories with Left/Right Arrows */}
       {!searchQuery.trim() && (
         <div className="relative mb-3 group/slider">

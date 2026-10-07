@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useMesob } from '../../context/MesobContext';
 import {
   Check,
@@ -9,7 +9,9 @@ import {
   ChefHat,
   BellRing,
   CheckCircle2,
+  CreditCard,
 } from 'lucide-react';
+import { PaymentModal } from './PaymentModal';
 
 export const OrderConfirmationScreen: React.FC = () => {
   const {
@@ -19,6 +21,8 @@ export const OrderConfirmationScreen: React.FC = () => {
     advanceOrderTracking,
     t,
     setIsShowWaiterOpen,
+    isPaymentModalOpen,
+    setIsPaymentModalOpen,
   } = useMesob();
 
   const activeOrder = currentLiveOrder || orderState.activeLiveOrder;
@@ -64,9 +68,15 @@ export const OrderConfirmationScreen: React.FC = () => {
     progressPercent = 95;
   } else if (status === 'SERVED') {
     headline = 'Order Served';
-    subheadline = 'Dishes served at your table. Enjoy your authentic dining experience!';
-    estimatedTime = 'Delivered';
+    subheadline = 'Dishes served at your table. Settle your bill or enjoy your meal!';
+    estimatedTime = 'Served · Ready for payment';
     statusBadge = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
+    progressPercent = 100;
+  } else if (status === 'PAID') {
+    headline = 'Order Paid & Settled';
+    subheadline = 'Thank you for dining with Mesob. Your digital receipt is ready.';
+    estimatedTime = 'Completed & Paid';
+    statusBadge = 'bg-emerald-500 text-stone-950 font-bold border-emerald-400';
     progressPercent = 100;
   } else if (status === 'CANCELLED') {
     headline = 'Order Cancelled';
@@ -216,23 +226,42 @@ export const OrderConfirmationScreen: React.FC = () => {
 
       {/* Bottom Actions */}
       <div className="space-y-2.5 pt-2">
-        {/* Table-side Fallback: Show Order to Waiter */}
-        <button
-          onClick={() => setIsShowWaiterOpen(true)}
-          className="w-full py-3.5 rounded-xl bg-obsidian-900 hover:bg-obsidian-850 border border-stone-800 hover:border-gold-500/50 text-stone-200 text-xs font-semibold transition flex items-center justify-center gap-2 cursor-pointer"
-        >
-          <UserCheck className="w-4 h-4 text-gold-400" />
-          <span>Show Order to Waiter / ለጋባዥዎ ያሳዩ</span>
-        </button>
+        {/* Settle Bill / Payment CTA when SERVED */}
+        {status === 'SERVED' && (
+          <button
+            onClick={() => setIsPaymentModalOpen(true)}
+            className="w-full py-4 rounded-xl bg-gold-500 hover:bg-gold-400 text-stone-950 text-xs font-bold uppercase tracking-wider shadow-lg shadow-gold-500/20 active:scale-98 transition flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <CreditCard className="w-4 h-4" />
+            <span>Pay Bill (Simulated Payment) • {totalAmount} ETB</span>
+          </button>
+        )}
 
         {/* View Digital Receipt */}
-        <button
-          onClick={() => navigateTo('/mesob/receipt')}
-          className="w-full py-3 rounded-xl bg-obsidian-950 border border-stone-800 hover:border-stone-700 text-stone-300 hover:text-stone-100 text-xs font-medium transition flex items-center justify-center gap-2 cursor-pointer"
-        >
-          <Receipt className="w-4 h-4 text-gold-400" />
-          <span>{t('viewOrderDetails', 'View Digital Receipt')}</span>
-        </button>
+        {(status === 'PAID' || status === 'SERVED') && (
+          <button
+            onClick={() => navigateTo('/mesob/receipt')}
+            className={`w-full py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 cursor-pointer ${
+              status === 'PAID'
+                ? 'bg-emerald-500 hover:bg-emerald-400 text-stone-950 shadow-md'
+                : 'bg-obsidian-900 border border-stone-800 hover:border-gold-500/50 text-stone-200'
+            }`}
+          >
+            <Receipt className="w-4 h-4" />
+            <span>{status === 'PAID' ? 'View Paid Receipt & Print' : t('viewOrderDetails', 'View Digital Receipt')}</span>
+          </button>
+        )}
+
+        {/* Table-side Fallback: Show Order to Waiter */}
+        {status !== 'PAID' && (
+          <button
+            onClick={() => setIsShowWaiterOpen(true)}
+            className="w-full py-3 rounded-xl bg-obsidian-900 hover:bg-obsidian-850 border border-stone-800 hover:border-gold-500/50 text-stone-200 text-xs font-medium transition flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <UserCheck className="w-4 h-4 text-gold-400" />
+            <span>Show Order to Waiter / ለአስተናጋጅ አሳይ</span>
+          </button>
+        )}
 
         {/* Back to Menu Link */}
         <button
@@ -242,6 +271,13 @@ export const OrderConfirmationScreen: React.FC = () => {
           {t('backToMenu', 'Back to Menu')}
         </button>
       </div>
+
+      {/* Embedded Payment Modal */}
+      <PaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        onPaymentComplete={() => navigateTo('/mesob/receipt')}
+      />
     </div>
   );
 };

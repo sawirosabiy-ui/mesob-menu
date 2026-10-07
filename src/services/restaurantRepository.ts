@@ -820,6 +820,7 @@ class RestaurantRepository {
         type,
         notes,
         idempotencyKey,
+        paymentStatus: 'unpaid',
       };
 
       const allOrders = this.getAllOrders();
@@ -862,6 +863,36 @@ class RestaurantRepository {
     }
   }
 
+  /**
+   * Advances order status to PAID, recording simulated payment method and timestamp
+   */
+  public payOrder(
+    restaurantId: string,
+    orderId: string,
+    method: 'telebirr' | 'cbe_birr' | 'card' | 'cash'
+  ): { success: boolean; order?: LiveOrder; error?: string } {
+    const allOrders = this.getAllOrders();
+    const idx = allOrders.findIndex((o) => o.id === orderId && o.restaurantId === restaurantId);
+
+    if (idx < 0) {
+      return { success: false, error: 'Order not found' };
+    }
+
+    const now = new Date().toISOString();
+    allOrders[idx] = {
+      ...allOrders[idx],
+      status: 'PAID',
+      paymentStatus: 'paid',
+      paymentMethod: method,
+      paidAt: now,
+      updatedAt: now,
+    };
+
+    safeStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(allOrders));
+    this.notify(restaurantId);
+    return { success: true, order: allOrders[idx] };
+  }
+
   // -------------------------------------------------------------
   // Analytics Summary
   // -------------------------------------------------------------
@@ -870,10 +901,10 @@ class RestaurantRepository {
     const tables = this.getTables(restaurantId);
     const avail = this.getAvailability(restaurantId);
 
-    const activeOrders = orders.filter((o) => !['SERVED', 'CANCELLED', 'REJECTED'].includes(o.status));
-    const servedOrActive = orders.filter((o) => o.status !== 'REJECTED' && o.status !== 'CANCELLED');
+    const activeOrders = orders.filter((o) => !['PAID', 'SERVED', 'CANCELLED', 'REJECTED'].includes(o.status));
+    const validOrders = orders.filter((o) => o.status !== 'CANCELLED' && o.status !== 'REJECTED');
 
-    const revenueToday = servedOrActive.reduce((sum, o) => sum + o.total, 0);
+    const revenueToday = validOrders.reduce((sum, o) => sum + o.total, 0);
 
     const activeTableNumbers = new Set(activeOrders.map((o) => o.tableNumber));
     const unavailableCount = Object.values(avail).filter((a) => a.status !== 'available').length;
@@ -881,14 +912,16 @@ class RestaurantRepository {
     // Tally dish counts
     const dishTally: Record<string, { name: string; count: number; revenue: number }> = {};
     orders.forEach((o) => {
-      o.items.forEach((item) => {
-        const name = item.dish.name;
-        if (!dishTally[name]) {
-          dishTally[name] = { name, count: 0, revenue: 0 };
-        }
-        dishTally[name].count += item.quantity;
-        dishTally[name].revenue += item.dish.price * item.quantity;
-      });
+      if (o.status !== 'CANCELLED' && o.status !== 'REJECTED') {
+        o.items.forEach((item) => {
+          const name = item.dish.name;
+          if (!dishTally[name]) {
+            dishTally[name] = { name, count: 0, revenue: 0 };
+          }
+          dishTally[name].count += item.quantity;
+          dishTally[name].revenue += item.dish.price * item.quantity;
+        });
+      }
     });
 
     const topDishes = Object.values(dishTally)

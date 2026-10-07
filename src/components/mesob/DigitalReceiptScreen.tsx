@@ -19,6 +19,7 @@ export const DigitalReceiptScreen: React.FC = () => {
   const {
     orderState,
     currentOrder,
+    currentLiveOrder,
     setRoute,
     selectedLanguage,
     t,
@@ -50,40 +51,48 @@ export const DigitalReceiptScreen: React.FC = () => {
     },
   ];
 
-  const effectiveOrderState: OrderState = {
-    items:
-      orderState.items && orderState.items.length > 0
-        ? orderState.items
-        : fallbackDishes,
-    tableNumber: orderState.tableNumber || tableNumber || '5',
-    status: 'sent',
-    orderId: orderState.orderId || 'MB3024',
-    submittedAt: orderState.submittedAt || new Date(),
-    serverAssigned: orderState.serverAssigned || 'Selamawit T.',
-    trackingStep: orderState.trackingStep || 'received',
-    estimatedMinutes: orderState.estimatedMinutes || '15 – 20 min',
-  };
+  const activeItems =
+    currentLiveOrder?.items && currentLiveOrder.items.length > 0
+      ? currentLiveOrder.items
+      : orderState.items && orderState.items.length > 0
+      ? orderState.items
+      : fallbackDishes;
 
-  const subtotal = effectiveOrderState.items.reduce(
+  const activeTableNumber = currentLiveOrder?.tableNumber || orderState.tableNumber || tableNumber || '5';
+  const activeOrderNum = currentLiveOrder?.orderNumber || orderState.orderId || 'MB3024';
+  const activeCreatedAt = currentLiveOrder?.createdAt || (orderState.submittedAt ? orderState.submittedAt.toISOString() : new Date().toISOString());
+
+  const calculatedSubtotal = activeItems.reduce(
     (acc, i) => acc + i.dish.price * i.quantity,
     0
   );
-  const serviceCharge = Math.round(subtotal * 0.05);
-  const total = subtotal + serviceCharge;
+  const calculatedServiceCharge = currentLiveOrder?.serviceCharge ?? Math.round(calculatedSubtotal * 0.05);
+  const calculatedTotal = currentLiveOrder?.total ?? (calculatedSubtotal + calculatedServiceCharge);
 
-  const order = currentOrder || {
-    id: effectiveOrderState.orderId || 'MB3024',
-    tableNumber: effectiveOrderState.tableNumber,
-    items: effectiveOrderState.items,
-    status: 'received' as const,
-    trackingStep: effectiveOrderState.trackingStep || ('received' as const),
-    subtotal,
-    serviceCharge,
-    total,
-    createdAt: effectiveOrderState.submittedAt
-      ? effectiveOrderState.submittedAt.toISOString()
-      : new Date().toISOString(),
-    estimatedMinutes: effectiveOrderState.estimatedMinutes || '15-20',
+  const effectiveOrderState: OrderState = {
+    items: activeItems,
+    tableNumber: activeTableNumber,
+    status: currentLiveOrder?.status || 'sent',
+    orderId: activeOrderNum,
+    submittedAt: new Date(activeCreatedAt),
+    serverAssigned: currentLiveOrder?.serverAssigned || orderState.serverAssigned || 'Selamawit T.',
+    trackingStep: 'served',
+    estimatedMinutes: 'Delivered',
+  };
+
+  const order = {
+    id: activeOrderNum,
+    tableNumber: activeTableNumber,
+    items: activeItems,
+    status: (currentLiveOrder?.status || 'received') as any,
+    trackingStep: 'served' as const,
+    subtotal: calculatedSubtotal,
+    serviceCharge: calculatedServiceCharge,
+    total: calculatedTotal,
+    createdAt: activeCreatedAt,
+    estimatedMinutes: 'Delivered',
+    paymentMethod: currentLiveOrder?.paymentMethod || 'Telebirr',
+    paymentStatus: currentLiveOrder?.paymentStatus || 'paid',
   };
 
   const handleShare = () => {

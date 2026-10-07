@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import { restaurantRepo } from '../../services/restaurantRepository';
 import { MenuImportWizard } from './MenuImportWizard';
+import { QRCodeSvg } from '../common/QRCodeSvg';
 import {
   Restaurant,
   Dish,
@@ -757,6 +758,19 @@ export const ManagerPortal: React.FC<ManagerPortalProps> = ({
                                   Mark Served
                                 </button>
                               )}
+                              {ord.status === 'SERVED' && (
+                                <button
+                                  onClick={() => restaurantRepo.payOrder(activeRestaurantId, ord.id, 'cash')}
+                                  className="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-stone-950 font-bold text-xs"
+                                >
+                                  Settle Paid
+                                </button>
+                              )}
+                              {ord.status === 'PAID' && (
+                                <span className="px-2.5 py-1 rounded-lg bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 font-mono font-bold text-xs">
+                                  ✓ PAID
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -815,8 +829,8 @@ export const ManagerPortal: React.FC<ManagerPortalProps> = ({
                       key={tbl.id}
                       className="bg-stone-900 border border-stone-800 rounded-2xl p-5 text-center space-y-3"
                     >
-                      <div className="w-20 h-20 bg-white p-1.5 rounded-xl mx-auto flex items-center justify-center text-stone-950 shadow-md">
-                        <QrCode className="w-16 h-16" />
+                      <div className="w-24 h-24 bg-white p-2 rounded-xl mx-auto flex items-center justify-center shadow-md">
+                        <QRCodeSvg value={url} size={84} />
                       </div>
 
                       <div>
@@ -921,28 +935,79 @@ export const ManagerPortal: React.FC<ManagerPortalProps> = ({
           {/* TAB 6: ANALYTICS */}
           {activeTab === 'analytics' && (
             <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Primary KPIs */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl">
                   <div className="text-xs text-stone-400">Total Orders Placed</div>
-                  <div className="text-3xl font-bold font-mono text-amber-300 mt-2">
+                  <div className="text-2xl sm:text-3xl font-bold font-mono text-amber-300 mt-2">
                     {analytics.ordersToday}
                   </div>
+                  <div className="text-[10px] text-stone-500 mt-1">Live customer & waiter tickets</div>
                 </div>
 
                 <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl">
                   <div className="text-xs text-stone-400">Gross Sales Volume</div>
-                  <div className="text-3xl font-bold font-mono text-emerald-400 mt-2">
+                  <div className="text-2xl sm:text-3xl font-bold font-mono text-emerald-400 mt-2">
                     {analytics.revenueToday.toLocaleString()} {restaurant.currency}
                   </div>
+                  <div className="text-[10px] text-stone-500 mt-1">Settled & served orders</div>
                 </div>
 
                 <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl">
-                  <div className="text-xs text-stone-400">Average Order Value (AOV)</div>
-                  <div className="text-3xl font-bold font-mono text-stone-100 mt-2">
+                  <div className="text-xs text-stone-400">Average Order (AOV)</div>
+                  <div className="text-2xl sm:text-3xl font-bold font-mono text-stone-100 mt-2">
                     {analytics.ordersToday > 0
                       ? Math.round(analytics.revenueToday / analytics.ordersToday)
                       : 0}{' '}
                     {restaurant.currency}
+                  </div>
+                  <div className="text-[10px] text-stone-500 mt-1">Average per dining table</div>
+                </div>
+
+                <div className="bg-stone-900 border border-stone-800 p-5 rounded-2xl">
+                  <div className="text-xs text-stone-400">Active Tables / 86-ed</div>
+                  <div className="text-2xl sm:text-3xl font-bold font-mono text-amber-200 mt-2">
+                    {analytics.activeTables} <span className="text-sm font-normal text-stone-500">tbls</span> · {analytics.unavailableDishesCount} <span className="text-sm font-normal text-stone-500">out</span>
+                  </div>
+                  <div className="text-[10px] text-stone-500 mt-1">Dining floor live status</div>
+                </div>
+              </div>
+
+              {/* Order Status Breakdown Bar */}
+              <div className="bg-stone-900 border border-stone-800 rounded-2xl p-5 space-y-3">
+                <h3 className="font-bold text-xs text-stone-300 uppercase tracking-wider">
+                  Live Ticket Pipeline Distribution
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
+                  <div className="p-3 rounded-xl bg-stone-950 border border-stone-800">
+                    <span className="text-stone-400 block text-[10px]">SUBMITTED</span>
+                    <span className="font-mono font-bold text-base text-amber-400">
+                      {orders.filter((o) => o.status === 'SUBMITTED' || o.status === 'RECEIVED').length}
+                    </span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-stone-950 border border-stone-800">
+                    <span className="text-stone-400 block text-[10px]">PREPARING</span>
+                    <span className="font-mono font-bold text-base text-blue-400">
+                      {orders.filter((o) => o.status === 'PREPARING' || o.status === 'ACCEPTED').length}
+                    </span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-stone-950 border border-stone-800">
+                    <span className="text-stone-400 block text-[10px]">READY</span>
+                    <span className="font-mono font-bold text-base text-emerald-400">
+                      {orders.filter((o) => o.status === 'READY').length}
+                    </span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-stone-950 border border-stone-800">
+                    <span className="text-stone-400 block text-[10px]">SERVED</span>
+                    <span className="font-mono font-bold text-base text-stone-300">
+                      {orders.filter((o) => o.status === 'SERVED').length}
+                    </span>
+                  </div>
+                  <div className="p-3 rounded-xl bg-stone-950 border border-stone-800">
+                    <span className="text-stone-400 block text-[10px]">PAID</span>
+                    <span className="font-mono font-bold text-base text-emerald-300">
+                      {orders.filter((o) => o.status === 'PAID').length}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -950,7 +1015,7 @@ export const ManagerPortal: React.FC<ManagerPortalProps> = ({
               {/* Top Selling Dishes */}
               <div className="bg-stone-900 border border-stone-800 rounded-2xl p-5 space-y-3">
                 <h3 className="font-bold text-xs text-stone-300 uppercase tracking-wider">
-                  Top Ordered Dishes
+                  Top Ordered Dishes & Revenue
                 </h3>
                 {analytics.topDishes.length === 0 ? (
                   <div className="text-xs text-stone-400">No dishes ordered yet.</div>
@@ -963,7 +1028,7 @@ export const ManagerPortal: React.FC<ManagerPortalProps> = ({
                           <span className="font-bold text-stone-200">{d.name}</span>
                         </div>
                         <div className="font-mono text-stone-300">
-                          {d.count} ordered · {d.revenue} {restaurant.currency}
+                          {d.count} ordered · {d.revenue.toLocaleString()} {restaurant.currency}
                         </div>
                       </div>
                     ))}
@@ -1275,8 +1340,11 @@ export const ManagerPortal: React.FC<ManagerPortalProps> = ({
 
             <div className="bg-white p-6 rounded-2xl text-stone-950 space-y-3 shadow-inner">
               <div className="text-2xl font-bold font-display">{restaurantName}</div>
-              <div className="w-36 h-36 bg-stone-100 p-2 rounded-xl mx-auto flex items-center justify-center border border-stone-300">
-                <QrCode className="w-32 h-32 text-stone-900" />
+              <div className="w-44 h-44 bg-white p-2 rounded-xl mx-auto flex items-center justify-center border border-stone-200 shadow-sm">
+                <QRCodeSvg
+                  value={`/r/${restaurant.slug}/t/${selectedTableForQR.token}`}
+                  size={160}
+                />
               </div>
               <div>
                 <div className="font-bold text-lg">{selectedTableForQR.name}</div>

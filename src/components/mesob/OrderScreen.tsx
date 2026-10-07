@@ -378,7 +378,7 @@ export const OrderScreen: React.FC = () => {
               className="w-full py-3.5 px-5 rounded-xl border border-stone-800 bg-obsidian-900/90 hover:bg-obsidian-800 text-stone-200 hover:text-gold-300 text-xs font-medium tracking-wide transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <UserCheck className="w-4 h-4 text-gold-400" />
-              <span>Show to Waiter / ለጋባዥዎ ያሳዩ</span>
+              <span>Show to Waiter / ለአስተናጋጅ አሳይ</span>
             </button>
           </div>
         </div>

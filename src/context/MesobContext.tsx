@@ -104,7 +104,12 @@ export interface MesobContextType {
   markOrderPreparing: (orderId: string) => void;
   markOrderReady: (orderId: string) => void;
   markOrderServed: (orderId: string) => void;
+  payOrder: (orderId: string, method: 'telebirr' | 'cbe_birr' | 'card' | 'cash') => void;
   cancelOrder: (orderId: string, reason?: string) => void;
+
+  // Payment Modal
+  isPaymentModalOpen: boolean;
+  setIsPaymentModalOpen: (open: boolean) => void;
 
   // Fallback: Show to Waiter
   isShowWaiterOpen: boolean;
@@ -621,7 +626,10 @@ export const MesobProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         est = 'Order is ready for serving!';
       } else if (currentLiveOrder.status === 'SERVED') {
         step = 'served';
-        est = 'Served at table';
+        est = 'Served at table · Ready for payment';
+      } else if (currentLiveOrder.status === 'PAID') {
+        step = 'served';
+        est = 'Paid & Settled';
       }
 
       setOrderState((prev) => ({
@@ -717,10 +725,14 @@ export const MesobProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     orderAudio.playStatusPing();
   };
 
-  const acceptOrder = (orderId: string) => updateOrderStatus(orderId, 'ACCEPTED');
+  const acceptOrder = (orderId: string) => updateOrderStatus(orderId, 'PREPARING');
   const markOrderPreparing = (orderId: string) => updateOrderStatus(orderId, 'PREPARING');
   const markOrderReady = (orderId: string) => updateOrderStatus(orderId, 'READY');
   const markOrderServed = (orderId: string) => updateOrderStatus(orderId, 'SERVED');
+  const payOrder = (orderId: string, method: 'telebirr' | 'cbe_birr' | 'card' | 'cash') => {
+    restaurantRepo.payOrder(activeRestaurantId, orderId, method);
+    orderAudio.playStatusPing();
+  };
   const cancelOrder = (orderId: string, reason?: string) => updateOrderStatus(orderId, 'CANCELLED', reason);
 
   const resetOrder = () => {
@@ -737,23 +749,29 @@ export const MesobProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const flow: Record<OrderStateStatus, OrderStateStatus> = {
       CREATED: 'SUBMITTED',
       DRAFT: 'SUBMITTED',
-      SUBMITTED: 'ACCEPTED',
-      RECEIVED: 'ACCEPTED',
+      SUBMITTED: 'PREPARING',
+      RECEIVED: 'PREPARING',
       ACCEPTED: 'PREPARING',
       PREPARING: 'READY',
       READY: 'SERVED',
-      SERVED: 'SERVED',
+      SERVED: 'PAID',
+      PAID: 'PAID',
       CANCELLED: 'CANCELLED',
       REJECTED: 'REJECTED',
     };
     const next = flow[currentLiveOrder.status] || 'SERVED';
-    updateOrderStatus(currentLiveOrder.id, next);
+    if (next === 'PAID') {
+      payOrder(currentLiveOrder.id, 'telebirr');
+    } else {
+      updateOrderStatus(currentLiveOrder.id, next);
+    }
   };
 
   // Modals & Bottom Sheets
   const [activeDishDetail, setActiveDishDetail] = useState<Dish | null>(null);
   const [activeAIGuideDish, setActiveAIGuideDish] = useState<Dish | null>(null);
   const [isQRScannerOpen, setIsQRScannerOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isSmartMenuOpen, setIsSmartMenuOpen] = useState(false);
   const [smartMenuAction, setSmartMenuAction] = useState<SmartMenuAction | null>(null);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
@@ -888,7 +906,10 @@ export const MesobProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     markOrderPreparing,
     markOrderReady,
     markOrderServed,
+    payOrder,
     cancelOrder,
+    isPaymentModalOpen,
+    setIsPaymentModalOpen,
     isShowWaiterOpen,
     setIsShowWaiterOpen,
     isOnline,

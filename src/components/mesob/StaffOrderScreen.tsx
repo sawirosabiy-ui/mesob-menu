@@ -49,7 +49,7 @@ export const StaffOrderScreen: React.FC = () => {
   const readyOrders = activeOrders.filter((o) => o.status === 'READY');
 
   const historyOrders = activeOrders.filter(
-    (o) => o.status === 'SERVED' || o.status === 'CANCELLED' || o.status === 'REJECTED'
+    (o) => o.status === 'PAID' || o.status === 'SERVED' || o.status === 'CANCELLED' || o.status === 'REJECTED'
   );
 
   // Sound alert trigger when incoming unaccepted changes
@@ -124,6 +124,8 @@ export const StaffOrderScreen: React.FC = () => {
                   ? 'bg-blue-500/20 text-blue-300 border-blue-500/40'
                   : isReady
                   ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                  : order.status === 'PAID'
+                  ? 'bg-emerald-950 text-emerald-300 border-emerald-500/50'
                   : isServed
                   ? 'bg-stone-800 text-stone-300 border-stone-700'
                   : 'bg-red-500/20 text-red-300 border-red-500/40'
@@ -173,7 +175,7 @@ export const StaffOrderScreen: React.FC = () => {
                 className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/20 cursor-pointer"
               >
                 <Check className="w-4 h-4" />
-                <span>ACCEPT</span>
+                <span>ACCEPT (START PREP)</span>
               </button>
               <button
                 onClick={() => setRejectingOrderId(order.id)}
@@ -217,9 +219,13 @@ export const StaffOrderScreen: React.FC = () => {
             </button>
           )}
 
-          {(isServed || isCancelled) && (
+          {(isServed || isCancelled || order.status === 'PAID') && (
             <div className="w-full text-center text-[11px] text-stone-500 font-mono py-1">
-              {isServed ? '✓ Completed & Served' : `✕ Cancelled: ${order.rejectionReason || 'No reason'}`}
+              {order.status === 'PAID'
+                ? `✓ Paid (${order.paymentMethod?.toUpperCase() || 'PAID'}) & Settled`
+                : isServed
+                ? '✓ Completed & Served'
+                : `✕ Cancelled: ${order.rejectionReason || 'No reason'}`}
             </div>
           )}
         </div>

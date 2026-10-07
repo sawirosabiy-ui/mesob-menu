@@ -30,6 +30,7 @@ export const WaiterOrderMode: React.FC = () => {
     setRoute,
     activeOrders,
     currentRestaurant,
+    markOrderServed,
   } = useMesob();
 
   const [activeTab, setActiveTab] = useState<WaiterTab>('new_order');
@@ -450,9 +451,33 @@ export const WaiterOrderMode: React.FC = () => {
                   ))}
                 </div>
 
-                <div className="pt-2 border-t border-stone-800 flex justify-between font-mono font-bold text-stone-200">
-                  <span>Total:</span>
-                  <span>{ord.total} ETB</span>
+                <div className="pt-2 border-t border-stone-800 flex items-center justify-between font-mono text-stone-200">
+                  <div className="flex items-center gap-2">
+                    <span className="text-stone-400">Total:</span>
+                    <span className="font-bold text-amber-300">{ord.total} ETB</span>
+                  </div>
+
+                  {ord.status === 'READY' && (
+                    <button
+                      onClick={() => markOrderServed(ord.id)}
+                      className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 text-[11px] font-bold font-sans flex items-center gap-1 shadow-sm cursor-pointer"
+                    >
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Confirm Served</span>
+                    </button>
+                  )}
+
+                  {ord.status === 'SERVED' && (
+                    <span className="text-[10px] text-emerald-400 font-sans font-semibold">
+                      ✓ Served at Table
+                    </span>
+                  )}
+
+                  {ord.status === 'PAID' && (
+                    <span className="text-[10px] text-emerald-400 font-sans font-bold">
+                      ✓ Paid ({ord.paymentMethod?.toUpperCase() || 'PAID'})
+                    </span>
+                  )}
                 </div>
               </div>
             ))

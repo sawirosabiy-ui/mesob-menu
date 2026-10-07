@@ -1,6 +1,7 @@
 import React from 'react';
 import { useMesob } from '../../context/MesobContext';
 import { X, QrCode, Sparkles, Check, Smartphone } from 'lucide-react';
+import { QRCodeSvg } from '../common/QRCodeSvg';
 
 export const QRSimulatorModal: React.FC = () => {
   const {
@@ -38,35 +39,13 @@ export const QRSimulatorModal: React.FC = () => {
           </button>
         </div>
 
-        {/* QR Code Graphic Display */}
+        {/* Real Scannable QR Code Graphic Display */}
         <div className="p-6 rounded-2xl bg-stone-950 border border-stone-800 flex flex-col items-center justify-center">
-          <div className="w-32 h-32 rounded-xl bg-white p-2.5 flex items-center justify-center shadow-md">
-            {/* SVG QR code graphic with Mesob centerpiece */}
-            <svg viewBox="0 0 100 100" className="w-full h-full text-stone-950 fill-current">
-              <rect x="0" y="0" width="30" height="30" />
-              <rect x="5" y="5" width="20" height="20" fill="white" />
-              <rect x="10" y="10" width="10" height="10" />
-
-              <rect x="70" y="0" width="30" height="30" />
-              <rect x="75" y="5" width="20" height="20" fill="white" />
-              <rect x="80" y="10" width="10" height="10" />
-
-              <rect x="0" y="70" width="30" height="30" />
-              <rect x="5" y="75" width="20" height="20" fill="white" />
-              <rect x="10" y="80" width="10" height="10" />
-
-              {/* Data modules */}
-              <rect x="36" y="8" width="6" height="6" />
-              <rect x="48" y="14" width="6" height="6" />
-              <rect x="36" y="24" width="6" height="6" />
-              <rect x="42" y="38" width="8" height="8" />
-              <rect x="60" y="42" width="6" height="6" />
-              <rect x="20" y="48" width="8" height="8" />
-              <rect x="74" y="60" width="6" height="6" />
-              <rect x="40" y="64" width="6" height="6" />
-              <rect x="60" y="76" width="8" height="8" />
-              <rect x="84" y="84" width="6" height="6" />
-            </svg>
+          <div className="w-36 h-36 rounded-2xl bg-white p-2.5 flex items-center justify-center shadow-lg">
+            <QRCodeSvg
+              value={`mesob.restaurant/table/${tableNumber}`}
+              size={130}
+            />
           </div>
           <span className="text-[11px] text-stone-400 mt-2 font-mono">
             mesob.restaurant/table/{tableNumber}

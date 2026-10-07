@@ -274,8 +274,11 @@ export type OrderStateStatus =
   | 'PREPARING'
   | 'READY'
   | 'SERVED'
+  | 'PAID'
   | 'CANCELLED'
   | 'REJECTED';
+
+export type PaymentMethod = 'telebirr' | 'cbe_birr' | 'card' | 'cash';
 
 export interface LiveOrder {
   id: string;
@@ -299,6 +302,9 @@ export interface LiveOrder {
   serverAssigned?: string;
   rejectionReason?: string;
   idempotencyKey?: string;
+  paymentMethod?: PaymentMethod;
+  paidAt?: string;
+  paymentStatus?: 'unpaid' | 'paid';
 }
 
 export interface OrderState {
